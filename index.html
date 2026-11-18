@@ -37,13 +37,13 @@
     nav a:hover { text-decoration:underline; }
     h1,h2,h3,p,figure { margin:0; }
     h1,h2,h3 { line-height:1.25; }
-    h1 { font-size:clamp(2rem,5vw,4.4rem); letter-spacing:-.055em; font-weight:850; }
+    h1 { font-size:clamp(2rem,4.6vw,4rem); letter-spacing:-.055em; font-weight:850; }
     h1 span { color:var(--mint); }
     h2 { font-size:clamp(1.55rem,3.3vw,2.65rem); letter-spacing:-.035em; margin-bottom:1.4rem; }
     h3 { font-size:1.17rem; margin-bottom:.65rem; }
     p + p { margin-top:.65rem; }
     .hero { padding-block:clamp(2.75rem,7vw,6.5rem); background:radial-gradient(ellipse at 84% 26%,#193b3d 0,transparent 62%),var(--navy); }
-    .hero .wrap { display:grid; grid-template-columns:1.05fr 1fr; align-items:center; gap:clamp(1.6rem,5vw,5rem); }
+    .hero .wrap { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.24fr); align-items:center; gap:clamp(1.6rem,4vw,3.7rem); }
     .eyebrow { color:var(--mint); font-weight:800; font-size:.91rem; letter-spacing:.045em; margin-bottom:1rem; }
     .lead { margin-top:1.25rem; max-width:40ch; color:#dbe6eb; }
     .hero-price { display:flex; flex-wrap:wrap; align-items:baseline; gap:.1rem .85rem; margin:1.45rem 0 .75rem; color:#dbe6eb; }
@@ -72,13 +72,24 @@
     .demo-control:hover { color:var(--sheet-ink); }
     .sample :focus-visible { outline-color:#87531b; }
     .demo-stage { grid-column:1 / -1; position:relative; min-width:0; }
-    .flow { display:flex; flex-wrap:wrap; align-items:center; gap:.28rem .48rem; padding:.55rem 0 .7rem; border-block:1px solid var(--rule); }
-    .flow [data-demo-file],.flow [data-demo-run] { display:inline-flex; align-items:center; gap:.34rem; padding:.32rem .48rem; border:1px solid transparent; border-radius:.23rem; font-size:.78rem; font-weight:680; }
-    .flow [data-demo-file]::before { content:""; width:.56rem; height:.7rem; flex:none; border:1px solid currentColor; border-radius:1px; background:linear-gradient(0deg, transparent 35%,currentColor 36% 48%,transparent 49%); }
-    .flow [data-demo-file].is-selected { border-color:#b8c9b7; background:#e7eee3; color:#254a3d; }
-    .flow > [aria-hidden] { color:#51665b; }
-    .flow [data-demo-run] { background:#224438; color:white; }
+    .flow { display:grid; grid-template-columns:1fr 1fr auto; align-items:center; gap:.55rem; padding:.8rem 0; border-block:1px solid var(--rule); }
+    .demo-files { display:grid; gap:.18rem; justify-items:start; min-width:0; position:relative; }
+    .demo-files [data-demo-file] { display:block; border-radius:.2rem; padding:.12rem .32rem; font-size:.78rem; font-weight:680; }
+    .demo-files [data-demo-file].is-selected { background:#e7eee3; color:#254a3d; }
+    .demo-files.is-dropped { opacity:.5; }
+    .demo-folder { display:grid; align-content:center; min-height:3.5rem; padding:.25rem .5rem; border:1px dashed #87998c; border-radius:.3rem; color:var(--sheet-muted); }
+    .demo-folder strong { font-size:.77rem; }
+    .demo-folder small { font-size:.69rem; }
+    .demo-folder.is-filled { background:#e7eee3; border-style:solid; color:#254a3d; }
+    .demo-run { display:grid; align-items:center; gap:.2rem; justify-items:center; }
+    .demo-run small { font-size:.69rem; color:var(--sheet-muted); }
+    .flow [data-demo-run] { padding:.32rem .55rem; border-radius:.23rem; font-size:.78rem; font-weight:680; background:#224438; color:white; text-align:center; }
     .flow [data-demo-run].is-clicked { background:#0e2d23; box-shadow:0 0 0 2px #bac9bc; }
+    @media (max-width:25rem) {
+      .flow { grid-template-columns:1fr 1fr; }
+      .demo-run { grid-column:1 / -1; display:flex; justify-content:flex-end; gap:.45rem; }
+    }
+
     .sample-result { position:relative; padding-top:.85rem; }
     .sample[data-state="selecting"] table,.sample[data-state="processing"] table { visibility:hidden; }
     .demo-status { position:absolute; inset:.85rem 0 0; display:grid; align-content:center; justify-items:start; gap:.25rem; padding:.75rem clamp(.3rem,2vw,1rem); text-align:left; }
@@ -185,10 +196,17 @@
           </div>
         </div>
         <figure class="sample">
-          <figcaption><strong>CSV集計デモ</strong>架空データによる操作イメージ</figcaption>
+          <figcaption><strong>CSVを集計する流れ</strong>架空データによる操作イメージ</figcaption>
           <div class="demo-heading"><button type="button" class="demo-control" hidden>デモを再生</button></div>
           <div class="demo-stage">
-            <div class="flow"><span data-demo-file>東口店.csv</span><span data-demo-file>西口店.csv</span><span aria-hidden="true">→</span><span data-demo-run>集計を実行</span></div>
+            <div class="flow">
+              <div class="demo-files">
+                <span data-demo-file>東口店.csv</span>
+                <span data-demo-file>西口店.csv</span>
+              </div>
+              <span class="demo-folder"><strong>指定フォルダ</strong><small>CSVの置き場所</small></span>
+              <span class="demo-run"><small>Excel</small><span data-demo-run>集計を実行</span></span>
+            </div>
             <div class="sample-result">
             <table>
             <caption>店舗別の集計例</caption>
@@ -302,6 +320,9 @@
       const statusDetail = status.querySelector("small");
       const cursor = sample.querySelector(".demo-cursor");
       const files = [...sample.querySelectorAll("[data-demo-file]")];
+      const fileGroup = sample.querySelector(".demo-files");
+      const folder = sample.querySelector(".demo-folder");
+      const folderCount = folder.querySelector("small");
       const runButton = sample.querySelector("[data-demo-run]");
       const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
       let observer;
@@ -320,6 +341,9 @@
         timers.forEach(clearTimeout);
         timers = [];
         files.forEach(file => file.classList.remove("is-selected"));
+        fileGroup.classList.remove("is-dropped");
+        folder.classList.remove("is-filled");
+        folderCount.textContent = "CSVの置き場所";
         runButton.classList.remove("is-clicked");
         cursor.classList.remove("is-clicking");
         cursor.style.transform = "translate(0, 0)";
@@ -339,20 +363,26 @@
         observer?.disconnect();
         reset();
         status.setAttribute("aria-live", manual ? "polite" : "off");
-        setState("selecting", "CSVを選択", "指定フォルダ内のファイルを確認");
-        // クリックの見せ方だけを再現し、ファイルの読み込みは行いません。
+        setState("selecting", "CSVを指定フォルダへ", "東口店・西口店のサンプルCSVを用意");
+        // 一連の画面表示だけを再現し、ファイルの読み込みは行いません。
         const steps = [
-          [60, () => moveTo(files[0])],
-          [620, () => { files[0].classList.add("is-selected"); cursor.classList.add("is-clicking"); }],
-          [950, () => moveTo(files[1])],
-          [1510, () => { files[1].classList.add("is-selected"); cursor.classList.add("is-clicking"); }],
-          [1840, () => {
-            moveTo(runButton);
-            setState("selecting", "2つのCSVを選択", "Excelで「集計を実行」を押します");
+          [150, () => moveTo(fileGroup)],
+          [720, () => {
+            files.forEach(file => file.classList.add("is-selected"));
+            cursor.classList.add("is-clicking");
           }],
-          [2400, () => { runButton.classList.add("is-clicked"); cursor.classList.add("is-clicking"); }],
-          [2580, () => setState("processing", "集計中…", "店舗ごとに売上を集計")],
-          [3660, () => setState("complete")]
+          [1050, () => moveTo(folder)],
+          [1660, () => {
+            cursor.classList.add("is-clicking");
+            fileGroup.classList.add("is-dropped");
+            folder.classList.add("is-filled");
+            folderCount.textContent = "CSV 2ファイル";
+            setState("selecting", "CSVを指定フォルダに配置", "Excelの「集計を実行」へ");
+          }],
+          [2330, () => moveTo(runButton)],
+          [2930, () => { runButton.classList.add("is-clicked"); cursor.classList.add("is-clicking"); }],
+          [3180, () => setState("processing", "集計中…", "店舗ごとに売上を集計")],
+          [4480, () => setState("complete")]
         ];
         timers = steps.map(([delay, action]) => setTimeout(action, delay));
       }
