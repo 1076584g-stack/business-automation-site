@@ -72,21 +72,16 @@
     .demo-control:hover { color:var(--sheet-ink); }
     .sample :focus-visible { outline-color:#87531b; }
     .demo-stage { grid-column:1 / -1; position:relative; min-width:0; }
-    .flow { display:grid; grid-template-columns:1fr 1fr auto; align-items:center; gap:.55rem; padding:.8rem 0; border-block:1px solid var(--rule); }
-    .demo-files { display:grid; gap:.18rem; justify-items:start; min-width:0; position:relative; }
-    .demo-files [data-demo-file] { display:block; border-radius:.2rem; padding:.12rem .32rem; font-size:.78rem; font-weight:680; }
+    .flow { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.55rem; padding:.8rem 0; border-block:1px solid var(--rule); }
+    .demo-files { display:flex; flex-wrap:wrap; align-items:center; gap:.25rem .4rem; min-width:0; }
+    .demo-files [data-demo-file] { display:block; border:1px solid var(--rule); border-radius:.23rem; padding:.28rem .42rem; font-size:.78rem; font-weight:680; }
     .demo-files [data-demo-file].is-selected { background:#e7eee3; color:#254a3d; }
-    .demo-files.is-dropped { opacity:.5; }
-    .demo-folder { display:grid; align-content:center; min-height:3.5rem; padding:.25rem .5rem; border:1px dashed #87998c; border-radius:.3rem; color:var(--sheet-muted); }
-    .demo-folder strong { font-size:.77rem; }
-    .demo-folder small { font-size:.69rem; }
-    .demo-folder.is-filled { background:#e7eee3; border-style:solid; color:#254a3d; }
     .demo-run { display:grid; align-items:center; gap:.2rem; justify-items:center; }
     .demo-run small { font-size:.69rem; color:var(--sheet-muted); }
     .flow [data-demo-run] { padding:.32rem .55rem; border-radius:.23rem; font-size:.78rem; font-weight:680; background:#224438; color:white; text-align:center; }
     .flow [data-demo-run].is-clicked { background:#0e2d23; box-shadow:0 0 0 2px #bac9bc; }
     @media (max-width:25rem) {
-      .flow { grid-template-columns:1fr 1fr; }
+      .flow { grid-template-columns:1fr; }
       .demo-run { grid-column:1 / -1; display:flex; justify-content:flex-end; gap:.45rem; }
     }
 
@@ -204,7 +199,6 @@
                 <span data-demo-file>東口店.csv</span>
                 <span data-demo-file>西口店.csv</span>
               </div>
-              <span class="demo-folder"><strong>指定フォルダ</strong><small>CSVの置き場所</small></span>
               <span class="demo-run"><small>Excel</small><span data-demo-run>集計を実行</span></span>
             </div>
             <div class="sample-result">
@@ -320,9 +314,6 @@
       const statusDetail = status.querySelector("small");
       const cursor = sample.querySelector(".demo-cursor");
       const files = [...sample.querySelectorAll("[data-demo-file]")];
-      const fileGroup = sample.querySelector(".demo-files");
-      const folder = sample.querySelector(".demo-folder");
-      const folderCount = folder.querySelector("small");
       const runButton = sample.querySelector("[data-demo-run]");
       const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
       let observer;
@@ -341,9 +332,6 @@
         timers.forEach(clearTimeout);
         timers = [];
         files.forEach(file => file.classList.remove("is-selected"));
-        fileGroup.classList.remove("is-dropped");
-        folder.classList.remove("is-filled");
-        folderCount.textContent = "CSVの置き場所";
         runButton.classList.remove("is-clicked");
         cursor.classList.remove("is-clicking");
         cursor.style.transform = "translate(0, 0)";
@@ -363,21 +351,22 @@
         observer?.disconnect();
         reset();
         status.setAttribute("aria-live", manual ? "polite" : "off");
-        setState("selecting", "集計するCSVを用意", "東口店・西口店のサンプルCSV");
-        // 一連の画面表示だけを再現し、ファイルの読み込みは行いません。
+        setState("selecting", "東口店のCSVを選択", "指定フォルダに入れたサンプルCSV");
+        // 選択と実行を再現するデモ。実際のファイルは読み込みません。
         const steps = [
-          [150, () => moveTo(fileGroup)],
+          [150, () => moveTo(files[0])],
           [1040, () => {
-            files.forEach(file => file.classList.add("is-selected"));
+            files[0].classList.add("is-selected");
             cursor.classList.add("is-clicking");
           }],
-          [1560, () => moveTo(folder)],
+          [1560, () => {
+            moveTo(files[1]);
+            setState("selecting", "西口店のCSVを選択", "2つ目のCSVを確認します");
+          }],
           [2440, () => {
+            files[1].classList.add("is-selected");
             cursor.classList.add("is-clicking");
-            fileGroup.classList.add("is-dropped");
-            folder.classList.add("is-filled");
-            folderCount.textContent = "CSV 2ファイル";
-            setState("selecting", "CSVを指定フォルダに配置", "東口店・西口店の2ファイルを入れます");
+            setState("selecting", "2つのCSVを選択済み", "東口店.csvと西口店.csv");
           }],
           [3940, () => { moveTo(runButton); setState("selecting", "Excelで集計を実行", "「集計を実行」ボタンをクリック"); }],
           [4800, () => { runButton.classList.add("is-clicked"); cursor.classList.add("is-clicking"); }],
