@@ -1,2 +1,8 @@
-# business-automation-site
-IT実務経験を活かしたExcel・CSV自動化ツールと業務効率化サービスの公式サイト。
+# 業務改善ソリューションズ（仮称）
+
+CSV自動集計ツールの紹介用静的サイトです。
+
+- 商品販売元: https://coconala.com/services/4494754
+- 情報発信サイト: https://1076584g-stack.github.io/ai-jissen-lab-site/
+
+価格・機能・制約は出品者が提示した商品ページのスクリーンショットを基に記載しています。ブランド名は商標確認前の仮称です。
