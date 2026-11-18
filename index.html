@@ -92,11 +92,11 @@
 
     .sample-result { position:relative; padding-top:.85rem; }
     .sample[data-state="selecting"] table,.sample[data-state="processing"] table { visibility:hidden; }
-    .demo-status { position:absolute; inset:.85rem 0 0; display:grid; align-content:center; justify-items:start; gap:.25rem; padding:.75rem clamp(.3rem,2vw,1rem); text-align:left; }
+    .demo-status { position:absolute; inset:.85rem 0 0; display:grid; align-content:center; justify-items:start; gap:.5rem; padding:1rem clamp(.5rem,2vw,1.25rem); text-align:left; }
     .demo-status[hidden] { display:none; }
-    .demo-status strong { font-weight:780; font-size:1.15rem; }
-    .demo-status small { color:var(--sheet-muted); font-size:.82rem; }
-    .demo-progress { display:none; width:min(9rem,75%); height:2px; margin-top:.7rem; overflow:hidden; background:#d9dfd4; }
+    .demo-status strong { display:block; border-left:4px solid var(--green); padding-left:.65rem; color:var(--sheet-ink); font-size:clamp(1.3rem,3vw,1.85rem); font-weight:850; line-height:1.35; text-wrap:balance; }
+    .demo-status small { margin-left:.9rem; color:var(--sheet-muted); font-size:clamp(.86rem,1.5vw,1rem); line-height:1.5; }
+    .demo-progress { display:none; width:min(9rem,75%); height:2px; margin:.55rem 0 0 .9rem; overflow:hidden; background:#d9dfd4; }
     .demo-progress::before { content:""; display:block; width:60%; height:100%; background:var(--green); }
     .sample[data-state="processing"] .demo-progress { display:block; }
     .demo-cursor { position:absolute; top:0; left:0; width:1.05rem; height:1.25rem; z-index:1; pointer-events:none; opacity:0; filter:drop-shadow(0 1px 1px #0005); }
@@ -105,8 +105,8 @@
     .sample[data-state="selecting"] .demo-cursor { opacity:1; }
     .demo-cursor.is-clicking::before,.demo-cursor.is-clicking::after { scale:.84; transform-origin:top left; }
     @media (prefers-reduced-motion:no-preference) {
-      .demo-cursor { transition:transform .48s cubic-bezier(.25,.75,.25,1); }
-      .sample[data-state="processing"] .demo-progress::before { animation:demo-progress 1s ease-out both; }
+      .demo-cursor { transition:transform .68s cubic-bezier(.25,.75,.25,1); }
+      .sample[data-state="processing"] .demo-progress::before { animation:demo-progress 1.65s ease-out both; }
       .sample[data-state="complete"] table { animation:demo-reveal .35s ease-out both; }
       @keyframes demo-progress { from { width:10%; } to { width:96%; } }
       @keyframes demo-reveal { from { opacity:0; } to { opacity:1; } }
@@ -363,26 +363,26 @@
         observer?.disconnect();
         reset();
         status.setAttribute("aria-live", manual ? "polite" : "off");
-        setState("selecting", "CSVを指定フォルダへ", "東口店・西口店のサンプルCSVを用意");
+        setState("selecting", "集計するCSVを用意", "東口店・西口店のサンプルCSV");
         // 一連の画面表示だけを再現し、ファイルの読み込みは行いません。
         const steps = [
           [150, () => moveTo(fileGroup)],
-          [720, () => {
+          [1040, () => {
             files.forEach(file => file.classList.add("is-selected"));
             cursor.classList.add("is-clicking");
           }],
-          [1050, () => moveTo(folder)],
-          [1660, () => {
+          [1560, () => moveTo(folder)],
+          [2440, () => {
             cursor.classList.add("is-clicking");
             fileGroup.classList.add("is-dropped");
             folder.classList.add("is-filled");
             folderCount.textContent = "CSV 2ファイル";
-            setState("selecting", "CSVを指定フォルダに配置", "Excelの「集計を実行」へ");
+            setState("selecting", "CSVを指定フォルダに配置", "東口店・西口店の2ファイルを入れます");
           }],
-          [2330, () => moveTo(runButton)],
-          [2930, () => { runButton.classList.add("is-clicked"); cursor.classList.add("is-clicking"); }],
-          [3180, () => setState("processing", "集計中…", "店舗ごとに売上を集計")],
-          [4480, () => setState("complete")]
+          [3940, () => { moveTo(runButton); setState("selecting", "Excelで集計を実行", "「集計を実行」ボタンをクリック"); }],
+          [4800, () => { runButton.classList.add("is-clicked"); cursor.classList.add("is-clicking"); }],
+          [5200, () => setState("processing", "集計中…", "店舗ごとに売上を集計")],
+          [7000, () => setState("complete")]
         ];
         timers = steps.map(([delay, action]) => setTimeout(action, delay));
       }
