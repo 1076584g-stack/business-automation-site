@@ -11,75 +11,108 @@
   <meta property="og:description" content="複数のCSVをWindows版Excelでまとめ、店舗別・商品別などの集計表に。">
   <meta property="og:url" content="https://1076584g-stack.github.io/business-automation-site/">
   <style>
-    :root { --navy:#10263b; --ink:#122a40; --muted:#425969; --green:#075541; --line:#cddbd6; --paper:#f2f7f4; font-family:"Instrument Sans","Yu Gothic UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif; color:var(--ink); }
+    :root {
+      --navy:#0b1c2a; --navy-soft:#142a3a; --ink:#132a39; --muted:#435a65;
+      --green:#075641; --mint:#b9f1d5; --line:#cddbd6; --paper:#f4f7f3;
+      font-family:"Instrument Sans","Yu Gothic UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+      color:var(--ink); background:#fff;
+    }
     *, *::before, *::after { box-sizing:border-box; }
     body { margin:0; line-height:1.75; overflow-wrap:anywhere; }
-    a { color:var(--green); text-underline-offset:.2em; }
+    a { color:var(--green); text-underline-offset:.23em; }
     a:hover { text-decoration-thickness:2px; }
     :focus-visible { outline:3px solid #a04d00; outline-offset:4px; }
     .dark :focus-visible { outline-color:#ffcd70; }
     .skip { position:absolute; z-index:2; top:.5rem; left:.5rem; padding:.5rem 1rem; background:white; transform:translateY(-150%); }
     .skip:focus { transform:none; }
-    .wrap { width:min(100% - 2rem, 70rem); margin-inline:auto; }
+    .wrap { width:min(calc(100% - 3rem), 74rem); margin-inline:auto; }
     .dark { background:var(--navy); color:white; }
     .dark a { color:white; }
-    .top { border-bottom:1px solid #425769; }
-    .top .wrap { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.25rem 1.5rem; padding-block:.75rem; }
-    .brand { font-weight:800; letter-spacing:.04em; }
-    nav { display:flex; flex-wrap:wrap; gap:0 1rem; }
-    nav a { display:inline-flex; align-items:center; min-height:44px; font-size:.94rem; }
+    .top { border-bottom:1px solid #344b58; }
+    .top .wrap { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.15rem 1.5rem; min-height:76px; padding-block:.55rem; }
+    .brand { display:inline-flex; align-items:center; gap:.75rem; font-size:.97rem; font-weight:800; letter-spacing:.04em; }
+    .brand::before { content:""; width:1.5rem; height:1.5rem; flex:none; border:1px solid #97d3b9; border-radius:.25rem; background:linear-gradient(to right,transparent 30%,#97d3b9 30% 37%,transparent 37%),repeating-linear-gradient(to bottom,transparent 0 30%,#97d3b9 30% 36%,transparent 36% 50%); }
+    nav { display:flex; flex-wrap:wrap; gap:0 1.35rem; }
+    nav a { display:inline-flex; align-items:center; min-height:44px; font-size:.92rem; text-decoration:none; }
+    nav a:hover { text-decoration:underline; }
     h1,h2,h3,p,figure { margin:0; }
     h1,h2,h3 { line-height:1.25; }
-    h1 { font-size:clamp(2rem,5.3vw,4rem); letter-spacing:-.035em; }
-    h2 { font-size:clamp(1.55rem,3.2vw,2.4rem); margin-bottom:1.15rem; }
-    h3 { font-size:1.15rem; margin-bottom:.55rem; }
+    h1 { font-size:clamp(2rem,5vw,4.4rem); letter-spacing:-.055em; font-weight:850; }
+    h1 span { color:var(--mint); }
+    h2 { font-size:clamp(1.55rem,3.3vw,2.65rem); letter-spacing:-.035em; margin-bottom:1.4rem; }
+    h3 { font-size:1.17rem; margin-bottom:.65rem; }
     p + p { margin-top:.65rem; }
-    .hero { padding-block:clamp(2.75rem,8vw,6.5rem); }
-    .hero .wrap { display:grid; grid-template-columns:1.15fr 1fr; align-items:center; gap:clamp(1.5rem,5vw,4.5rem); }
-    .eyebrow { color:#b9efdb; font-weight:800; margin-bottom:.7rem; }
-    .lead { margin-top:1rem; max-width:39ch; color:#e1ecf2; }
-    .hero-price { margin:1.25rem 0 .65rem; color:#e1ecf2; }
-    .hero-price strong { color:white; margin-right:.65rem; }
-    .button { display:inline-flex; align-items:center; justify-content:center; padding:.75rem 1.15rem; min-height:48px; border:1px solid transparent; border-radius:.4rem; background:var(--green); color:white; font-weight:800; text-decoration:none; }
-    .dark .button { background:#c8f4df; color:#073b2b; }
+    .hero { padding-block:clamp(2.75rem,7vw,6.5rem); background:radial-gradient(ellipse at 84% 26%,#193b3d 0,transparent 62%),var(--navy); }
+    .hero .wrap { display:grid; grid-template-columns:1.05fr 1fr; align-items:center; gap:clamp(1.6rem,5vw,5rem); }
+    .eyebrow { color:var(--mint); font-weight:800; font-size:.91rem; letter-spacing:.045em; margin-bottom:1rem; }
+    .lead { margin-top:1.25rem; max-width:40ch; color:#dbe6eb; }
+    .hero-price { display:flex; flex-wrap:wrap; align-items:baseline; gap:.1rem .85rem; margin:1.45rem 0 .75rem; color:#dbe6eb; }
+    .hero-price strong { color:white; font-size:1.65rem; line-height:1.15; font-variant-numeric:tabular-nums; }
+    .actions { display:flex; flex-wrap:wrap; align-items:center; gap:.6rem 1.15rem; }
+    .actions > a:not(.button) { display:inline-flex; align-items:center; min-height:44px; font-size:.9rem; }
+    .button { display:inline-flex; align-items:center; justify-content:center; gap:.85rem; padding:.73rem 1.15rem; min-height:50px; border-radius:.35rem; background:var(--green); color:white; font-weight:800; text-decoration:none; }
+    .button::after { content:""; width:.48rem; height:.48rem; border-top:2px solid currentColor; border-right:2px solid currentColor; transform:rotate(45deg); }
+    .dark .button { background:var(--mint); color:#0a3627; }
+    .dark .button:hover { background:#dcfaeb; }
     .button:hover { text-decoration:underline; }
-    .sample { border-radius:.75rem; background:white; color:var(--ink); padding:clamp(.85rem,2.5vw,1.6rem); }
-    figcaption { font-size:.87rem; font-weight:700; color:var(--muted); }
-    .flow { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem .6rem; margin:.8rem 0 1rem; }
-    .flow span:not([aria-hidden]) { background:var(--paper); border:1px solid var(--line); border-radius:.25rem; padding:.2rem .55rem; font-weight:700; font-size:.9rem; }
-    table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
-    caption { text-align:left; font-weight:800; padding-bottom:.35rem; }
-    th,td { padding:.55rem .45rem; border-bottom:1px solid var(--line); text-align:left; }
-    td { text-align:right; }
-    thead, tfoot { background:var(--paper); }
-    section.content { padding-block:clamp(2.45rem,6vw,4.8rem); }
+    .sample { border:1px solid #436065; border-radius:1.25rem; background:#15313b; color:white; padding:clamp(.75rem,2.45vw,1.55rem); box-shadow:0 24px 70px #0004; }
+    figcaption { font-size:.8rem; font-weight:700; color:#d8e7e7; margin-bottom:1rem; }
+    .flow { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem .5rem; margin:0 0 1rem; }
+    .flow span:not([aria-hidden]) { background:#213e47; border:1px solid #527377; border-radius:.4rem; padding:.33rem .65rem; font-weight:700; font-size:.83rem; }
+    .flow span[aria-hidden] { color:var(--mint); }
+    .sample-result { background:white; color:var(--ink); padding:clamp(.65rem,2vw,1.2rem); border-radius:.75rem; }
+    table { width:100%; border-collapse:collapse; font-size:clamp(.77rem,1.6vw,.98rem); font-variant-numeric:tabular-nums; }
+    caption { text-align:left; font-weight:800; font-size:1.06rem; padding-bottom:.65rem; }
+    th,td { padding:.67rem .42rem; border-bottom:1px solid var(--line); text-align:left; }
+    td, th:not(:first-child) { text-align:right; }
+    thead { background:var(--paper); }
+    tfoot { background:#e1f4e9; font-weight:800; }
+    tfoot th,tfoot td { border-bottom:0; }
+    section.content { padding-block:clamp(2.65rem,6.5vw,5.25rem); }
     .tint { background:var(--paper); }
-    .intro { max-width:65ch; margin-bottom:1.3rem; color:var(--muted); }
-    .pair,.features { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+    .intro { max-width:65ch; margin-bottom:1.65rem; color:var(--muted); }
+    .pair,.features { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.15rem; }
     .reasons { grid-template-columns:repeat(3,minmax(0,1fr)); }
-    .specs { margin-bottom:1.25rem; }
+    .reasons .card { border-width:2px 0 0; border-color:var(--green); border-radius:0; padding-inline:0; }
+    .reasons .card p { max-width:37ch; }
+    .specs { margin-bottom:1.55rem; }
     .audience li + li { margin-top:.5rem; }
-    .card { border:1px solid var(--line); border-radius:.6rem; padding:clamp(1rem,3vw,1.65rem); background:white; }
-    .after { border-top:4px solid var(--green); }
-    .before { border-top:4px solid #617482; }
+    .card { border:1px solid var(--line); border-radius:.8rem; padding:clamp(1rem,3vw,1.8rem); background:white; }
+    .after { background:#e8f5ed; border-color:#accfbe; }
+    .before h3 { color:var(--muted); }
+    .after h3 { color:var(--green); }
     .card p,.card li { color:var(--muted); }
     ol,ul { margin:.55rem 0 0; padding-left:1.45rem; }
-    .price { display:block; font-size:2rem; line-height:1.3; margin:.45rem 0; }
-    .purchase-link { margin-top:1.25rem; }
+    li::marker { color:var(--green); font-weight:700; }
+    .price { display:block; font-size:clamp(1.9rem,4vw,2.85rem); line-height:1.2; margin:.5rem 0; font-variant-numeric:tabular-nums; }
+    .pricing-main { border:2px solid var(--green); }
+    .purchase-link { margin-top:1.35rem; }
     .checks { margin:0; }
-    .checks > div { border-bottom:1px solid var(--line); padding:.85rem 0; display:grid; grid-template-columns:minmax(10rem,1fr) 3fr; gap:.4rem 1rem; }
+    .checks > div { border-top:1px solid var(--line); padding:1rem 0; display:grid; grid-template-columns:minmax(10rem,1fr) 3fr; gap:.4rem 1rem; }
+    .checks > div:last-child { border-bottom:1px solid var(--line); }
     dt { font-weight:800; } dd { margin:0; }
     details { border-bottom:1px solid var(--line); padding:.15rem 0; }
-    summary { cursor:pointer; font-weight:800; padding:.75rem .2rem; min-height:44px; }
-    details p { margin:0 0 .9rem 1.3rem; }
-    .closing { padding-block:2.6rem; }
-    .closing p { margin-bottom:1rem; }
-    footer { padding-block:1.4rem; border-top:1px solid #425769; font-size:.9rem; }
+    details:first-of-type { border-top:1px solid var(--line); }
+    summary { cursor:pointer; font-weight:800; padding:.85rem .2rem; min-height:44px; }
+    summary::marker { color:var(--green); }
+    details p { margin:0 0 1rem 1.3rem; color:var(--muted); }
+    .closing { background:#0d4033; padding-block:clamp(2.6rem,6vw,4.5rem); }
+    .closing p { max-width:62ch; margin-bottom:1.15rem; color:#e0eee8; }
+    footer { padding-block:1.4rem; border-top:1px solid #344b58; font-size:.9rem; }
     footer p + p { margin-top:.25rem; }
-    @media (max-width:46rem) {
+    @media (max-width:49rem) {
       .hero .wrap,.pair,.features,.checks > div { grid-template-columns:1fr; }
-      .hero .wrap { gap:1.75rem; }
+      .reasons { gap:.6rem; }
     }
+    @media (max-width:35rem) {
+      .wrap { width:calc(100% - 2rem); }
+      .top .wrap { padding-top:.8rem; }
+      nav { gap:0 .9rem; }
+      nav a { font-size:.83rem; }
+      .hero .wrap { gap:1.6rem; }
+      .hero .button { width:100%; }
+    }
+
   </style>
 </head>
 <body>
@@ -100,15 +133,19 @@
       <div class="wrap">
         <div>
           <p class="eyebrow">Windows版 ExcelのCSV自動集計ツール</p>
-          <h1 id="product">毎月のCSV集計を、<br>貼り付け作業から<br>ボタンひとつへ。</h1>
+          <h1 id="product">毎月のCSV集計を、<br>貼り付け作業から<br><span>ボタンひとつへ。</span></h1>
           <p class="lead">月末、店舗ごとのCSVを開いて、列をそろえて、Excelに貼り付ける。集計のたびに繰り返すその作業を、ひとつのツールにまとめました。設定後は、指定フォルダにCSVを入れてボタンを押すだけ。店舗別・商品別などの集計結果をExcelで確認できます。</p>
           <p class="hero-price"><strong>3,000円</strong>買い切り・月額料金なし</p>
-          <a class="button" href="https://coconala.com/services/4494754">ココナラで購入する</a>
+          <div class="actions">
+            <a class="button" href="https://coconala.com/services/4494754">ココナラで購入する</a>
+            <a href="#requirements">対応環境を確認</a>
+          </div>
         </div>
         <figure class="sample">
           <figcaption>サンプル（架空データを使った集計イメージ）</figcaption>
-          <div class="flow"><span>複数のCSV</span><span aria-hidden="true">→</span><span>Excelで集計</span></div>
-          <table>
+          <div class="flow"><span>東口店.csv</span><span>西口店.csv</span><span aria-hidden="true">→</span><span>Excelで集計</span></div>
+          <div class="sample-result">
+            <table>
             <caption>店舗別の集計例</caption>
             <thead><tr><th scope="col">店舗</th><th scope="col">件数</th><th scope="col">合計</th></tr></thead>
             <tbody>
@@ -116,7 +153,8 @@
               <tr><th scope="row">西口店</th><td>2件</td><td>8,500円</td></tr>
             </tbody>
             <tfoot><tr><th scope="row">総計</th><td>5件</td><td>20,500円</td></tr></tfoot>
-          </table>
+            </table>
+          </div>
         </figure>
       </div>
     </section>
@@ -151,10 +189,10 @@
         <h2>商品詳細・料金</h2>
         <ul class="specs"><li>入力は、先頭行に見出しがあるCSVです。</li><li>複数のCSVをまとめた表と、店舗別・商品別などの集計表が出ます。</li><li>集計は合計・件数・平均・最大・最小に対応し、総計も表示します。</li></ul>
         <div class="pair">
-          <article class="card"><h3>CSV自動集計ツール</h3><strong class="price">3,000円</strong><p>買い切り・月額料金なし</p><ul><li>Excelマクロツール（.xlsm）</li><li>画像付き操作説明書（PDF）と練習用CSV</li><li>購入後7日間の質問サポート</li></ul></article>
+          <article class="card pricing-main"><h3>CSV自動集計ツール</h3><strong class="price">3,000円</strong><p>買い切り・月額料金なし</p><ul><li>Excelマクロツール（.xlsm）</li><li>画像付き操作説明書（PDF）と練習用CSV</li><li>購入後7日間の質問サポート</li></ul></article>
           <article class="card"><h3>CSVに合わせた設定代行</h3><strong class="price">＋3,000円</strong><p>有料オプション。依頼シートにCSVの見出しと集計したい内容を記入いただき、設定済みのツールをお渡しします。CSVの中身の送付は不要です。</p></article>
         </div>
-        <p class="purchase-link"><a href="https://coconala.com/services/4494754">ココナラで価格・購入条件を確認する</a></p>
+        <p class="purchase-link"><a class="button" href="https://coconala.com/services/4494754">ココナラで購入条件を確認する</a></p>
       </div>
     </section>
     <section class="content" aria-labelledby="audience">
