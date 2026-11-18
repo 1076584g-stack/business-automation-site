@@ -56,6 +56,9 @@
     .tint { background:var(--paper); }
     .intro { max-width:65ch; margin-bottom:1.3rem; color:var(--muted); }
     .pair,.features { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+    .reasons { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .specs { margin-bottom:1.25rem; }
+    .audience li + li { margin-top:.5rem; }
     .card { border:1px solid var(--line); border-radius:.6rem; padding:clamp(1rem,3vw,1.65rem); background:white; }
     .after { border-top:4px solid var(--green); }
     .before { border-top:4px solid #617482; }
@@ -97,10 +100,10 @@
       <div class="wrap">
         <div>
           <p class="eyebrow">Windows版 ExcelのCSV自動集計ツール</p>
-          <h1 id="product">毎月のCSV集計を、<br>ボタンひとつで。</h1>
-          <p class="lead">レジやネットショップから出力した複数のCSVを1つの表にまとめ、店舗別・商品別などの集計表を作ります。</p>
+          <h1 id="product">毎月のCSV集計を、<br>貼り付け作業から<br>ボタンひとつへ。</h1>
+          <p class="lead">月末、店舗ごとのCSVを開いて、列をそろえて、Excelに貼り付ける。集計のたびに繰り返すその作業を、ひとつのツールにまとめました。設定後は、指定フォルダにCSVを入れてボタンを押すだけ。店舗別・商品別などの集計結果をExcelで確認できます。</p>
           <p class="hero-price"><strong>3,000円</strong>買い切り・月額料金なし</p>
-          <a class="button" href="https://coconala.com/services/4494754">ココナラで商品詳細を見る</a>
+          <a class="button" href="https://coconala.com/services/4494754">ココナラで購入する</a>
         </div>
         <figure class="sample">
           <figcaption>サンプル（架空データを使った集計イメージ）</figcaption>
@@ -135,18 +138,18 @@
     </section>
     <section class="content" id="features">
       <div class="wrap">
-        <h2>ツールでできること</h2>
-        <div class="features">
-          <article class="card"><h3>複数CSVの統合</h3><p>列の順番が違っても見出し名で対応付けます。日付・数値の表記をそろえ、重複を除去できます。</p></article>
-          <article class="card"><h3>条件指定とグループ別集計</h3><p>店舗や金額などで絞り込み、グループごとの合計・件数・平均・最大・最小と総計を出せます。</p></article>
-          <article class="card"><h3>入力エラーの確認</h3><p>不正な日付や列不足などを一覧に表示し、ファイル名・行番号・対処方法を確認できます。</p></article>
-          <article class="card"><h3>Excel内で処理</h3><p>集計時のインターネット接続や外部サービスの契約は不要です。元のCSVは読み取り専用で扱います。</p></article>
+        <h2>毎月の集計に使いやすい3つの理由</h2>
+        <div class="features reasons">
+          <article class="card"><h3>列の順番が違っても、ひとつの表に</h3><p>「店舗」「金額」などの見出しを手がかりに複数のCSVをまとめます。日付や金額の書き方をそろえ、重複の除去や条件での絞り込みもできます。</p></article>
+          <article class="card"><h3>エラーが出たら、確認する行がわかる</h3><p>日付の形式が合わない、必要な列が足りないといったときは、エラー一覧でファイル名・行番号・対処方法を確認できます。</p></article>
+          <article class="card"><h3>手元のExcelで何度でも使える</h3><p>買い切りで、ツールの月額料金はかかりません。集計はインターネット接続なしで行えます。元のCSVは読み取るだけなので、集計をやり直しても元ファイルはそのままです。</p></article>
         </div>
       </div>
     </section>
     <section class="content tint" id="pricing">
       <div class="wrap">
-        <h2>料金と納品内容</h2>
+        <h2>商品詳細・料金</h2>
+        <ul class="specs"><li>入力は、先頭行に見出しがあるCSVです。</li><li>複数のCSVをまとめた表と、店舗別・商品別などの集計表が出ます。</li><li>集計は合計・件数・平均・最大・最小に対応し、総計も表示します。</li></ul>
         <div class="pair">
           <article class="card"><h3>CSV自動集計ツール</h3><strong class="price">3,000円</strong><p>買い切り・月額料金なし</p><ul><li>Excelマクロツール（.xlsm）</li><li>画像付き操作説明書（PDF）と練習用CSV</li><li>購入後7日間の質問サポート</li></ul></article>
           <article class="card"><h3>CSVに合わせた設定代行</h3><strong class="price">＋3,000円</strong><p>有料オプション。依頼シートにCSVの見出しと集計したい内容を記入いただき、設定済みのツールをお渡しします。CSVの中身の送付は不要です。</p></article>
@@ -154,7 +157,17 @@
         <p class="purchase-link"><a href="https://coconala.com/services/4494754">ココナラで価格・購入条件を確認する</a></p>
       </div>
     </section>
-    <section class="content" id="requirements">
+    <section class="content" aria-labelledby="audience">
+      <div class="wrap">
+        <h2 id="audience">こんな方におすすめ</h2>
+        <ul class="audience">
+          <li>月末にレジやネットショップの売上CSVをまとめる店舗・ECの担当者</li>
+          <li>店舗別・商品別の報告を作るたびにExcelへ転記している経理・事務担当者</li>
+          <li>集計のたびに関数を組み直す手間を減らし、数字の確認に時間を使いたい方</li>
+        </ul>
+      </div>
+    </section>
+    <section class="content tint" id="requirements">
       <div class="wrap">
         <h2>対応環境・購入前の確認</h2>
         <dl class="checks">
@@ -164,18 +177,17 @@
         </dl>
       </div>
     </section>
-    <section class="content tint">
+    <section class="content">
       <div class="wrap">
         <h2>制作者について</h2>
         <p><strong>motoji_infra</strong></p>
         <p>IT運用・保守の実務経験をもとに、Excel・VBA・SQLを使った業務効率化ツールを制作しています。</p>
       </div>
     </section>
-    <section class="content" id="faq">
+    <section class="content tint" id="faq">
       <div class="wrap">
         <h2>よくある質問</h2>
-        <details><summary>自分のCSVに合わせて設定できますか？</summary><p>設定シートの列名をお手元のCSVの見出しに合わせて変更できます。設定代行も有料オプションでご利用いただけます。</p></details>
-        <details><summary>設定代行や質問で、CSVの中身を送る必要はありますか？</summary><p>CSVの中身の送付は不要です。設定代行では、見出しと集計したい内容を依頼シートでお知らせください。</p></details>
+        <details><summary>自分のCSVも使えますか？</summary><p>CSVの先頭行に見出しがあれば、設定シートの列名をお手元のファイルに合わせて変更できます。設定代行では、見出しと集計したい内容を依頼シートで伺います。CSVの中身を送る必要はありません。</p></details>
         <details><summary>64ビット版のExcelでも使えますか？</summary><p>実機での動作確認は32ビット版で行っています。64ビット版をご利用の方は、購入前にココナラでご相談ください。</p></details>
         <details><summary>購入後のサポートや機能追加は相談できますか？</summary><p>購入後7日間はココナラのトークルームで質問できます。機能追加や個別変更は、購入前に見積り相談からお問い合わせください。</p></details>
       </div>
@@ -183,8 +195,8 @@
     <section class="closing dark" aria-labelledby="purchase">
       <div class="wrap">
         <h2 id="purchase">購入・お問い合わせ</h2>
-        <p>商品詳細と最新の購入条件をご確認いただけます。お手元のCSVへの対応が気になる場合は、ココナラからご相談ください。</p>
-        <a class="button" href="https://coconala.com/services/4494754">ココナラで購入・相談する</a>
+        <p>次の月次集計では、CSVをまとめる手間を減らして、数字の確認に時間を使いませんか。Windows版Excelの環境とCSVの見出しを確認できたら、ココナラで購入に進めます。ご自身のCSVに合うか迷ったときは、購入前に出品ページからご相談ください。</p>
+        <a class="button" href="https://coconala.com/services/4494754">ココナラで購入する</a>
       </div>
     </section>
   </main>
