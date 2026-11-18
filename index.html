@@ -60,6 +60,29 @@
     .flow { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem .5rem; margin:0 0 1rem; }
     .flow span:not([aria-hidden]) { background:#213e47; border:1px solid #527377; border-radius:.4rem; padding:.33rem .65rem; font-weight:700; font-size:.83rem; }
     .flow span[aria-hidden] { color:var(--mint); }
+    .demo-heading { display:flex; justify-content:flex-end; margin-bottom:.65rem; }
+    .demo-control { min-height:44px; padding:.35rem .65rem; border:1px solid #66868a; border-radius:.4rem; background:transparent; color:white; font:inherit; font-size:.8rem; font-weight:750; cursor:pointer; }
+    .demo-control:hover { background:#284650; }
+    .demo-stage,.sample-result { position:relative; }
+    .flow span.is-selected,.flow span.is-clicked { background:var(--mint); border-color:var(--mint); color:#0a3627; }
+    .sample[data-state="selecting"] table,.sample[data-state="processing"] table { visibility:hidden; }
+    .demo-status { position:absolute; inset:0; display:grid; align-content:center; justify-items:center; gap:.65rem; padding:1rem; text-align:center; font-weight:800; }
+    .demo-status[hidden] { display:none; }
+    .demo-status small { color:var(--muted); font-size:.83rem; font-weight:500; }
+    .demo-progress { display:none; width:min(12rem,75%); height:.45rem; margin-top:.2rem; border-radius:1rem; overflow:hidden; background:#e0eee8; }
+    .demo-progress::before { content:""; display:block; width:60%; height:100%; border-radius:inherit; background:var(--green); }
+    .sample[data-state="processing"] .demo-progress { display:block; }
+    .demo-cursor { position:absolute; top:0; left:0; width:1.5rem; height:1.65rem; z-index:1; pointer-events:none; opacity:0; filter:drop-shadow(0 1px 2px #0009); }
+    .demo-cursor::before { content:""; position:absolute; inset:0; background:#091a26; clip-path:polygon(0 0, 100% 66%, 57% 70%, 42% 100%); }
+    .demo-cursor::after { content:""; position:absolute; inset:3px 5px 6px 3px; background:white; clip-path:polygon(0 0, 100% 66%, 57% 70%, 42% 100%); }
+    .sample[data-state="selecting"] .demo-cursor { opacity:1; }
+    .demo-cursor.is-clicking { filter:drop-shadow(0 0 5px #72eeb2) drop-shadow(0 1px 2px #0009); }
+    @media (prefers-reduced-motion:no-preference) {
+      .demo-cursor { transition:transform .48s cubic-bezier(.25,.75,.25,1); }
+      .sample[data-state="processing"] .demo-progress::before { animation:demo-progress 1s ease-out both; }
+      @keyframes demo-progress { from { width:10%; } to { width:96%; } }
+    }
+    @media (prefers-reduced-motion:reduce) { .sample[data-state="selecting"] .demo-cursor { opacity:0; } }
     .sample-result { background:white; color:var(--ink); padding:clamp(.65rem,2vw,1.2rem); border-radius:.75rem; }
     table { width:100%; border-collapse:collapse; font-size:clamp(.77rem,1.6vw,.98rem); font-variant-numeric:tabular-nums; }
     caption { text-align:left; font-weight:800; font-size:1.06rem; padding-bottom:.65rem; }
@@ -142,9 +165,11 @@
           </div>
         </div>
         <figure class="sample">
-          <figcaption>サンプル（架空データを使った集計イメージ）</figcaption>
-          <div class="flow"><span>東口店.csv</span><span>西口店.csv</span><span aria-hidden="true">→</span><span>Excelで集計</span></div>
-          <div class="sample-result">
+          <figcaption>集計の流れ（架空データを使ったイメージ）</figcaption>
+          <div class="demo-heading"><button type="button" class="demo-control" hidden>デモを再生</button></div>
+          <div class="demo-stage">
+            <div class="flow"><span data-demo-file>東口店.csv</span><span data-demo-file>西口店.csv</span><span aria-hidden="true">→</span><span data-demo-run>集計を実行</span></div>
+            <div class="sample-result">
             <table>
             <caption>店舗別の集計例</caption>
             <thead><tr><th scope="col">店舗</th><th scope="col">件数</th><th scope="col">合計</th></tr></thead>
@@ -154,6 +179,11 @@
             </tbody>
             <tfoot><tr><th scope="row">総計</th><td>5件</td><td>20,500円</td></tr></tfoot>
             </table>
+              <div class="demo-status" aria-live="off" hidden>
+                <strong></strong><small></small><span class="demo-progress" aria-hidden="true"></span>
+              </div>
+            </div>
+            <span class="demo-cursor" aria-hidden="true"></span>
           </div>
         </figure>
       </div>
@@ -242,5 +272,89 @@
     <p>業務改善ソリューションズ</p>
     <p>AI活用・開発記録は <a href="https://1076584g-stack.github.io/ai-jissen-lab-site/">AI実践ラボ</a> で発信しています。</p>
   </div></footer>
+  <script>
+    (() => {
+      const sample = document.querySelector(".sample");
+      const stage = sample.querySelector(".demo-stage");
+      const control = sample.querySelector(".demo-control");
+      const status = sample.querySelector(".demo-status");
+      const statusTitle = status.querySelector("strong");
+      const statusDetail = status.querySelector("small");
+      const cursor = sample.querySelector(".demo-cursor");
+      const files = [...sample.querySelectorAll("[data-demo-file]")];
+      const runButton = sample.querySelector("[data-demo-run]");
+      const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+      let observer;
+      let timers = [];
+
+      function setState(state, title = "", detail = "") {
+        sample.dataset.state = state;
+        const running = state === "selecting" || state === "processing";
+        status.hidden = !running;
+        statusTitle.textContent = title;
+        statusDetail.textContent = detail;
+        control.textContent = running ? "デモを停止" : state === "complete" ? "もう一度見る" : "デモを再生";
+      }
+
+      function reset() {
+        timers.forEach(clearTimeout);
+        timers = [];
+        files.forEach(file => file.classList.remove("is-selected"));
+        runButton.classList.remove("is-clicked");
+        cursor.classList.remove("is-clicking");
+        cursor.style.transform = "translate(0, 0)";
+        setState("ready");
+      }
+
+      function moveTo(target) {
+        const origin = stage.getBoundingClientRect();
+        const rect = target.getBoundingClientRect();
+        const x = rect.left - origin.left + rect.width * .48;
+        const y = rect.top - origin.top + rect.height * .55;
+        cursor.style.transform = "translate(" + x + "px, " + y + "px)";
+        cursor.classList.remove("is-clicking");
+      }
+
+      function play(manual) {
+        observer?.disconnect();
+        reset();
+        status.setAttribute("aria-live", manual ? "polite" : "off");
+        setState("selecting", "CSVを選択", "指定フォルダ内のファイルを確認");
+        // クリックの見せ方だけを再現し、ファイルの読み込みは行いません。
+        const steps = [
+          [60, () => moveTo(files[0])],
+          [620, () => { files[0].classList.add("is-selected"); cursor.classList.add("is-clicking"); }],
+          [950, () => moveTo(files[1])],
+          [1510, () => { files[1].classList.add("is-selected"); cursor.classList.add("is-clicking"); }],
+          [1840, () => {
+            moveTo(runButton);
+            setState("selecting", "2件のCSVを選択", "Excelで「集計を実行」を押します");
+          }],
+          [2400, () => { runButton.classList.add("is-clicked"); cursor.classList.add("is-clicking"); }],
+          [2580, () => setState("processing", "集計中…", "2件のCSVを店舗別に集計")],
+          [3660, () => setState("complete")]
+        ];
+        timers = steps.map(([delay, action]) => setTimeout(action, delay));
+      }
+
+      control.hidden = false;
+      setState("ready");
+      control.addEventListener("click", () => {
+        if (sample.dataset.state === "selecting" || sample.dataset.state === "processing") {
+          reset();
+        } else {
+          play(true);
+        }
+      });
+
+      // 画面内に入ったときだけ、初回のデモを自動再生します。
+      if (!reducedMotion.matches && "IntersectionObserver" in window) {
+        observer = new IntersectionObserver(([entry]) => {
+          if (entry.isIntersecting && !reducedMotion.matches) play(false);
+        }, { threshold: .4 });
+        observer.observe(sample);
+      }
+    })();
+  </script>
 </body>
 </html>
